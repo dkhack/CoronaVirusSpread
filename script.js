@@ -3,6 +3,8 @@
  let myMap;
  let canvas;
  let data = [];
+ let currentColor;
+ let dataSource;
  const options = {
   lat: 0,
   lng: 0,
@@ -20,18 +22,35 @@
 
      myMap = mappa.tileMap(options);
      myMap.overlay(canvas);
+     dataSource = select('#dataSource');
+     dataSource.changed(processData);
+     currentColor = color(255, 0, 200, 100); 
+
      processData();
 
  }
 
  function processData() {
   data = [];
+
+  let type = dataSource.value();
+  switch (type) {
+    case 'Confirmed' :
+      currentColor = color(64, 250, 200, 100);
+      break;
+    case 'Deaths' :
+      currentColor = color(200, 0, 100, 100);
+      break;
+  }
+
+
   let maxValue = 0;
   let minValue = Infinity;
   for (let row of dataSet.rows) {
     let latitude = (row.get('Latitude'));
     let longitude = row.get('Longitude');
-    let confirmed = row.get('Confirmed');
+    let confirmed = Number(row.get(type));
+    //console.log(confirmed + row.get('Country'));
     
     data.push({latitude,longitude,confirmed});
     if(confirmed>maxValue) {
@@ -41,12 +60,13 @@
       minValue = confirmed;
     }
    }
-
+   
    let minD = sqrt(minValue);
    let maxD = sqrt(maxValue);
-
+   //console.log(minD +' maxd'+maxD)
    for(let country of data) {
-     country.diameter = map(sqrt(country.confirmed),minD,maxD,1,3);
+     country.diameter = map(sqrt(country.confirmed),minD,maxD,1,10);
+    // console.log(country.diameter);
    }
 
 
