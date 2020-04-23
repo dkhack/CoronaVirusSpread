@@ -2,6 +2,7 @@
  let mappa = new Mappa('Leaflet');
  let myMap;
  let canvas;
+ let data = [];
  const options = {
   lat: 0,
   lng: 0,
@@ -15,43 +16,51 @@
 
  function setup() {
      canvas = createCanvas(900,600);
-     for (let row of dataSet.rows) {
-            console.log(row.get('Country'));
-     }
+     
 
      myMap = mappa.tileMap(options);
      myMap.overlay(canvas);
+     processData();
+
+ }
+
+ function processData() {
+  data = [];
+  let maxValue = 0;
+  let minValue = Infinity;
+  for (let row of dataSet.rows) {
+    let latitude = (row.get('Latitude'));
+    let longitude = row.get('Longitude');
+    let confirmed = row.get('Confirmed');
+    
+    data.push({latitude,longitude,confirmed});
+    if(confirmed>maxValue) {
+      maxValue= confirmed;
+    }
+    if(confirmed<minValue) {
+      minValue = confirmed;
+    }
+   }
+
+   let minD = sqrt(minValue);
+   let maxD = sqrt(maxValue);
+
+   for(let country of data) {
+     country.diameter = map(sqrt(country.confirmed),minD,maxD,1,3);
+   }
+
 
  }
 
  function draw() {
    //  background(0);
 clear();
-const nigeria = myMap.latLngToPixel(11.396396, 5.076543); 
-// Using that position, draw an ellipse
-ellipse(nigeria.x, nigeria.y, 20, 20);
+for(let country of data) {
+  const pix = myMap.latLngToPixel(country.latitude,country.longitude);
+  fill(64,250,200,100);
+  const zoom = myMap.zoom();
+  const scal = pow(2,zoom);
+  ellipse(pix.x,pix.y,country.diameter*scal);
+}
+
  }
-// let myMap;
-// let canvas;
-// const mappa = new Mappa('Leaflet');
-
-// // Lets put all our map options in a single object
-// const options = {
-//   lat: 0,
-//   lng: 0,
-//   zoom: 4,
-//   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-// }
-
-// function setup(){
-//   canvas = createCanvas(640,640); 
-//   // background(100); let's uncomment this, we don't need it for now
-
-//   // Create a tile map with the options declared
-//   myMap = mappa.tileMap(options); 
-//   myMap.overlay(canvas);
-// }
-
-// function draw(){
-
-// }
