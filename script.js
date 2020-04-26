@@ -21,6 +21,7 @@
      
 
      myMap = mappa.tileMap(options);
+     
      myMap.overlay(canvas);
      dataSource = select('#dataSource');
      dataSource.changed(processData);
@@ -81,6 +82,7 @@ for(let country of data) {
   const zoom = myMap.zoom();
   const scal = pow(2,zoom);
   ellipse(pix.x,pix.y,country.diameter*scal);
+ 
 }
 
  }
