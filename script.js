@@ -1,8 +1,7 @@
- let dataSet;
+ //let dataSet;
  let mappa = new Mappa('Leaflet');
  let myMap;
  let canvas;
- let data = [];
  let currentColor;
  let dataSource;
  let liveData;
@@ -15,7 +14,7 @@
 }
 
  function preload() {
-     dataSet = loadTable('coronaDataSet.csv','header');
+    // dataSet = loadTable('coronaDataSet.csv','header');
      let request = new XMLHttpRequest();
      request.open("GET","https://www.trackcorona.live/api/countries");
      request.responseType = "json";
@@ -46,7 +45,7 @@
  }
 
  function processData() {
-  data = [];  //for static data stored on csv file
+  //data = [];  //for static data stored on csv file
   liveDataArr = [];  //for live data from json of api call
   let type = dataSource.value();
   switch (type) {
@@ -87,32 +86,6 @@ var i;
  }
 
  }
- maxValue = 0;
- minValue = Infinity;
-
-for (let row of dataSet.rows) {
-  let latitude = (row.get('Latitude'));
-  let longitude = row.get('Longitude');
-  let confirmed = Number(row.get(type));
-  //console.log(confirmed + row.get('Country'));
-  
-  data.push({latitude,longitude,confirmed});
-  if(confirmed>maxValue) {
-    maxValue= confirmed;
-  }
-  if(confirmed<minValue) {
-    minValue = confirmed;
-  }
- }
-
-   
-    minD = sqrt(minValue);
-    maxD = sqrt(maxValue);
-   //console.log(minD +' maxd'+maxD)
-   for(let country of data) {
-     country.diameter = map(sqrt(country.confirmed),minD,maxD,1,10);
-    // console.log(country.diameter);
-   }
   }
 
 
