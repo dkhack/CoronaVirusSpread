@@ -1,4 +1,4 @@
-,Country,Confirmed,Deaths,Mortality Rate,Latitude,Longitude,Country_Code
+,Country,confirmed,dead,Mortality Rate,Latitude,Longitude,Country_Code
 0,Afghanistan,1092,36,3.3,33.93911,67.709953,AF
 1,Albania,609,26,4.27,41.153332,20.168331,AL
 2,Algeria,2811,392,13.95,28.033886,1.659626,DZ

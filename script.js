@@ -5,6 +5,8 @@
  let data = [];
  let currentColor;
  let dataSource;
+ let liveData;
+ let liveDataArr;
  const options = {
   lat: 0,
   lng: 0,
@@ -14,6 +16,17 @@
 
  function preload() {
      dataSet = loadTable('coronaDataSet.csv','header');
+     let request = new XMLHttpRequest();
+     request.open("GET","https://www.trackcorona.live/api/countries");
+     request.responseType = "json";
+     request.send();
+     request.onload = () =>{
+        if(request.status===200) {
+          liveData = request.response.data;
+        }
+       
+
+     }
  }
 
  function setup() {
@@ -28,55 +41,88 @@
      currentColor = color(255, 0, 200, 100); 
 
      processData();
+     
 
  }
 
  function processData() {
-  data = [];
-
+  data = [];  //for static data stored on csv file
+  liveDataArr = [];  //for live data from json of api call
   let type = dataSource.value();
   switch (type) {
-    case 'Confirmed' :
+    case 'confirmed' :
       currentColor = color(64, 250, 200, 100);
       break;
-    case 'Deaths' :
-      currentColor = color(200, 0, 100, 100);
+    case 'dead' :
+      currentColor = color(200, 10, 100, 100);
       break;
   }
 
 
   let maxValue = 0;
   let minValue = Infinity;
-  for (let row of dataSet.rows) {
-    let latitude = (row.get('Latitude'));
-    let longitude = row.get('Longitude');
-    let confirmed = Number(row.get(type));
-    //console.log(confirmed + row.get('Country'));
-    
-    data.push({latitude,longitude,confirmed});
-    if(confirmed>maxValue) {
-      maxValue= confirmed;
-    }
-    if(confirmed<minValue) {
-      minValue = confirmed;
-    }
-   }
+ if(liveData!=null) {
+var i;
+ for(i= 0;i<liveData.length;i++){
+   let latitude = liveData[i].latitude;
+   let longitude = liveData[i].longitude;
    
-   let minD = sqrt(minValue);
-   let maxD = sqrt(maxValue);
+   let confirmed =Number(liveData[i][type]);
+   liveDataArr.push({latitude,longitude,confirmed});
+
+   if(confirmed>maxValue) {
+    maxValue= confirmed;
+  }
+  if(confirmed<minValue) {
+    minValue = confirmed;
+  }
+ }
+ 
+ let minD = sqrt(minValue);
+ let maxD = sqrt(maxValue);
+ //console.log(minD +' maxd'+maxD)
+ for(let country of liveDataArr) {
+   country.diameter = map(sqrt(country.confirmed),minD,maxD,1,10);
+  // console.log(country.diameter);
+ }
+
+ }
+ maxValue = 0;
+ minValue = Infinity;
+
+for (let row of dataSet.rows) {
+  let latitude = (row.get('Latitude'));
+  let longitude = row.get('Longitude');
+  let confirmed = Number(row.get(type));
+  //console.log(confirmed + row.get('Country'));
+  
+  data.push({latitude,longitude,confirmed});
+  if(confirmed>maxValue) {
+    maxValue= confirmed;
+  }
+  if(confirmed<minValue) {
+    minValue = confirmed;
+  }
+ }
+
+   
+    minD = sqrt(minValue);
+    maxD = sqrt(maxValue);
    //console.log(minD +' maxd'+maxD)
    for(let country of data) {
      country.diameter = map(sqrt(country.confirmed),minD,maxD,1,10);
     // console.log(country.diameter);
    }
+  }
 
 
- }
+ 
 
  function draw() {
    //  background(0);
 clear();
-for(let country of data) {
+
+for(let country of liveDataArr) {
   const pix = myMap.latLngToPixel(country.latitude,country.longitude);
   fill(64,250,200,100);
   const zoom = myMap.zoom();
@@ -85,4 +131,6 @@ for(let country of data) {
  
 }
 
+
  }
+
