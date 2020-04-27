@@ -8,16 +8,16 @@ let dataSet;
  let liveData;
  let liveDataArr;
  const options = {
-  lat: 0,
-  lng: 0,
-  zoom: 1.5,
+  lat: 37.0902405,
+  lng: -95.7128906,
+  zoom: 4,
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
 
  function preload() {
      dataSet = loadTable('coronaDataSet.csv','header');
      let request = new XMLHttpRequest();
-     request.open("GET","https://www.trackcorona.live/api/countries");
+     request.open("GET","https://www.trackcorona.live/api/provinces");
      request.responseType = "json";
      request.send();
      request.onload = () =>{
@@ -64,9 +64,11 @@ let dataSet;
  if(liveData!=null) {
 var i;
  for(i= 0;i<liveData.length;i++){
+    // console.log("came here");
+   if(liveData[i].country_code == 'us'){
    let latitude = liveData[i].latitude;
    let longitude = liveData[i].longitude;
-   console.log(type);
+ //  console.log(type);
    let confirmed =Number(liveData[i][type]);
    liveDataArr.push({latitude,longitude,confirmed});
 
@@ -76,6 +78,7 @@ var i;
   if(confirmed<minValue) {
     minValue = confirmed;
   }
+}
  }
  
  let minD = sqrt(minValue);
@@ -124,7 +127,7 @@ clear();
 
 for(let country of liveDataArr) {
   const pix = myMap.latLngToPixel(country.latitude,country.longitude);
-  fill(64,250,200,100);
+  fill(currentColor);
   const zoom = myMap.zoom();
   const scal = pow(2,zoom);
   ellipse(pix.x,pix.y,country.diameter*scal);
