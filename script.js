@@ -31,11 +31,14 @@ let dataSet;
 
  function setup() {
      canvas = createCanvas(900,600);
+
+    // canvas.position(500,100);
      
 
      myMap = mappa.tileMap(options);
      
      myMap.overlay(canvas);
+     
      dataSource = select('#dataSource');
      dataSource.changed(processData);
      currentColor = color(255, 0, 200, 100); 
@@ -124,7 +127,7 @@ clear();
 
 for(let country of liveDataArr) {
   const pix = myMap.latLngToPixel(country.latitude,country.longitude);
-  fill(64,250,200,100);
+  fill(currentColor);
   const zoom = myMap.zoom();
   const scal = pow(2,zoom);
   ellipse(pix.x,pix.y,country.diameter*scal);

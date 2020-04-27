@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" >Corona Virus Tracker</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="./home.html">Home</a></li>
+      <li><a href="./index.html">World Map</a></li>
+      <li><a href="./usmap.html">US Map</a></li>
+      
+    </ul>
+  </div>
+</nav>
+  
+<div class="container">
+  <h2>Global Stats</h2>
+  <table class ="table table-bordered table-striped" id="globalVirus_update">
+    <tr>
+        
+        <th>New Confirmed</th>
+        <th>Total Confirmed</th>
+        <th>New Deaths</th>
+        <th>Total Deaths</th>
+        <th>Total Recovered</th>
+        
+
+    </tr>
+</table>
+  <h3>Corona Virus Update</h3>
+  <table class ="table table-bordered table-striped" id="virus_update">
+      <tr>
+          <th>Country</th>
+          <th>New Confirmed</th>
+          <th>Total Confirmed</th>
+          <th>New Deaths</th>
+          <th>Total Deaths</th>
+          <th>Total Recovered</th>
+          <th>Date</th>
+
+      </tr>
+  </table>
+</div>
+
+</body>
+</html>
+
+<script>
+$(document).ready(function(){
+  
+    $.getJSON('https://api.covid19api.com/summary', function (data) {
+      var global_data = '';
+      var country_data = '';
+     // console.log(data.Countries)
+     let i = 0;
+      $.each(data,function(key,value){
+          console.log("hh");
+          console.log( value.length);
+          if(i==0){
+          global_data += '<tr>';
+          global_data += '<td>'+value.NewConfirmed +'</td>';
+          global_data += '<td>'+value.TotalConfirmed +'</td>';   
+          global_data += '<td>'+value.NewDeaths +'</td>';   
+          global_data += '<td>'+value.TotalDeaths +'</td>';   
+          global_data += '<td>'+value.TotalRecovered +'</td>';         
+
+          global_data += '</tr>';}
+          else if(i==1) {
+              let j = 0;
+              for(j;j<value.length;j++){
+                country_data += '<tr>';
+                country_data += '<td>'+value[j].Country +'</td>';        
+                country_data += '<td>'+value[j].NewConfirmed +'</td>';
+                country_data += '<td>'+value[j].TotalConfirmed +'</td>';   
+                country_data += '<td>'+value[j].NewDeaths +'</td>';   
+                country_data += '<td>'+value[j].TotalDeaths +'</td>';   
+                country_data += '<td>'+value[j].TotalRecovered +'</td>'; 
+                country_data += '<td>'+value[j].Date +'</td>';
+                country_data += '</tr>';}}
+          
+          i++;
+      });
+     // console.log(global_data);
+      $('#globalVirus_update').append(global_data);
+      $('#virus_update').append(country_data);
+      
+
+      
+    });
+
+});
+
+
+</script>
